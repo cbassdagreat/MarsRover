@@ -6,16 +6,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
-import cbassdagreat.github.marsrover.R
-import cbassdagreat.github.marsrover.adapter.FotoAdapter
+import cbassdagreat.github.marsrover.adapter.PhotoAdapter
 import cbassdagreat.github.marsrover.databinding.FragmentListaBinding
+import cbassdagreat.github.marsrover.model.Photo
+import cbassdagreat.github.marsrover.viewmodel.RoverVM
 
 class ListaFragment : Fragment() {
 
     lateinit var binding: FragmentListaBinding
-    //lateinit var viewModel by activityViewModels<> {  }
-    private val adapter = FotoAdapter()
+    private val viewModel by activityViewModels<RoverVM>()
+    private val adapter = PhotoAdapter()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -31,6 +33,17 @@ class ListaFragment : Fragment() {
             rvLista.adapter = adapter
             rvLista.layoutManager = layoutManager
         }
+
+        adapter.setMiListener(object : PhotoAdapter.MiListener{
+            override fun miOnClick(photo: Photo)
+            {
+                viewModel.updateData(photo)
+            }
+        })
+
+        viewModel.pics.observe(viewLifecycleOwner, Observer {
+            adapter.updateData(it)
+        })
 
 
 
